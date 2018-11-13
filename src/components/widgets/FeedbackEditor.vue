@@ -3,14 +3,15 @@
     p.control
       label.label {{ header }}
       .field.is-horizontal
-        .select
+        .select(v-if="languages")
           select(v-model="language")
             option(value="" selected) {{ tokens[ 'item_none' ] }}
             option(v-for="lang in languages" :value="lang") {{ lang }}
+        bulma-checkbox(v-else v-model="enabled" :label="tokens[ 'lbl_enabled' ]")
         slot(name="first")
       .field.is-horizontal
         .select
-          select(v-model="thresholdIsSmart" :disabled="!isLanguageSelected")
+          select(v-model="thresholdIsSmart" :disabled="!isEnabled")
             option(:value="false") {{ tokens[ 'item_fixed' ] }}
             option(:value="true") {{ tokens[ 'item_calib' ] }}
         template(v-if="thresholdIsSmart")
@@ -19,7 +20,7 @@
           input.input(type="number" step="100" v-model.number="thresholdMax" :disabled="!canEditCalibThresholdParams" max="5000" :min="thresholdMin")
           .control-line ms
         template(v-else)
-          input.input(type="number" step="100" v-model.number="thresholdValue" :disabled="!language")
+          input.input(type="number" step="100" v-model.number="thresholdValue" :disabled="!isEnabled")
           .control-line ms
         slot(name="second")
       .field.is-horizontal
@@ -30,7 +31,7 @@
 import { i10n } from '@/utils/i10n.js';
 import DataUtils from '@/utils/data-utils.js';
 
-import { SyllabOptions } from '@/model/session/feedbacks.js';
+import BulmaCheckbox from '@/components/widgets/bulmaCheckbox.vue';
 
 /**
  * @fires input
@@ -38,12 +39,22 @@ import { SyllabOptions } from '@/model/session/feedbacks.js';
 export default {
   name: 'feedback-editor',
 
+  components: {
+    'bulma-checkbox': BulmaCheckbox,
+  },
+
   data() {
     return {
       language: DataUtils.convertLegacy( this.value.language ),
+      /** @type {boolean} */
+      enabled: !!this.value.language,
+      /** @type {boolean} */
       thresholdIsSmart: this.value.threshold.smart,
+      /** @type {number} */
       thresholdMin: this.value.threshold.min,
+      /** @type {number} */
       thresholdMax: this.value.threshold.max,
+      /** @type {number} */
       thresholdValue: this.value.threshold.value,
 
       tokens: i10n( 'task_editor_feedback' ),
@@ -52,7 +63,7 @@ export default {
 
   props: {
     value: {
-      type: Object, // SyllabOptions
+      type: Object,
       required: true,
     },
     header: {
@@ -61,25 +72,25 @@ export default {
     },
     languages: {
       type: Array,
-      required: true,
+      required: false,
     },
   },
 
   computed: {
     /** @returns {boolean} */
     canEditCalibThresholdParams() {
-      return this.language && this.thresholdIsSmart;
+      return this.isEnabled && !!this.thresholdIsSmart;
     },
 
     /** @returns {boolean} */
-    isLanguageSelected() {
-      return !!this.language;
+    isEnabled() {
+      return this.languages ? !!this.language : this.enabled;
     },
 
     /** @returns {{language: string, threshold: {smart: boolean, min: number, max: number, value: number}}} */
     model() {
       return {
-        language: this.language,
+        language: this.languages ? this.language : (this.enabled ? 'any' : ''),
         threshold: {
           smart: this.thresholdIsSmart,
           min: this.thresholdMin,
@@ -92,6 +103,7 @@ export default {
 
   watch: {
     language() { this.$emit( 'input', this.model ); },
+    enabled() { this.$emit( 'input', this.model ); },
     thresholdIsSmart() { this.$emit( 'input', this.model ); },
     thresholdMin() { this.$emit( 'input', this.model ); },
     thresholdMax() { this.$emit( 'input', this.model ); },

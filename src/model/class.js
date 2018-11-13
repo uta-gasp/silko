@@ -67,6 +67,7 @@ export default class Class extends Recordable {
       pages: Task.textToPages( task.text ),
       syllab: task.syllab,
       speech: task.speech,
+      highlight: task.highlight,
       questionnaire: task.questionnaire,
       useTimeout: task.useTimeout,
       timeout: task.timeout,

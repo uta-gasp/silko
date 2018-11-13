@@ -67,7 +67,7 @@ import BulmaCheckbox from '@/components/widgets/bulmaCheckbox.vue';
 import { TextPageImage } from '@/model/task/textPageImage.js';
 import { Question } from '@/model/session/question.js';
 import Intro from '@/model/intro.js';
-import { SyllabOptions, SpeechOptions } from '@/model/session/feedbacks.js';
+import { SyllabOptions, SpeechOptions, HighlightOptions } from '@/model/session/feedbacks.js';
 
 /**
  * @typedef Tab
@@ -109,6 +109,7 @@ export default {
       syllab: Task.defaultSyllab,
       speech: Task.defaultSpeech,
       syllabExceptions: '',
+      highlight: Task.defaultHighlight,
 
       /** @type {TextPageImage[]} */
       images: [],
@@ -226,6 +227,9 @@ export default {
       if ( this.ref.syllab.exceptions ) {
         this.syllabExceptions = Task.syllabsToText( this.ref.syllab.exceptions );
       }
+      if ( this.ref.highlight ) {
+        this.highlight = this.ref.highlight;
+      }
 
       if ( this.ref.pages ) {
         this.ref.pages.forEach( ( page, index ) => {
@@ -292,11 +296,12 @@ export default {
       this.$emit( 'modified' );
     },
 
-    /** @param {{syllab: SyllabOptions, speech: SpeechOptions, syllabExceptions: string}} e */
+    /** @param {{syllab: SyllabOptions, speech: SpeechOptions, syllabExceptions: string, highlight: HighlightOptions}} e */
     setFeedbackInput( e ) {
       this.syllab = e.syllab;
       this.speech = e.speech;
       this.syllabExceptions = e.syllabExceptions;
+      this.highlight = e.highlight;
 
       this.$emit( 'modified' );
     },
@@ -318,6 +323,7 @@ export default {
       const defaults = JSON.stringify( {
         syllab: this.syllab,
         speech: this.speech,
+        highlight: this.highlight,
       } );
       window.localStorage.setItem( TASK_DEFAULTS, defaults );
     },
@@ -340,6 +346,7 @@ export default {
         pages: Task.textToPages( this.text ),
         syllab: { ...this.syllab },
         speech: { ...this.speech },
+        highlight: { ...this.highlight },
         useTimeout: this.useTimeout,
         timeout: this.timeout,
         recordAudio: this.recordAudio,
@@ -363,6 +370,7 @@ export default {
         intro: this.intro,
         syllab: this.syllab,
         speech: this.speech,
+        highlight: this.highlight,
         images: this.images,
         questionnaire: this.questionnaire,
         useTimeout: this.useTimeout,

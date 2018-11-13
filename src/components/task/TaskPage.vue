@@ -135,7 +135,7 @@ export default {
 
       this.font = Font.from( container.$data.textStyle );
       
-      this.feedbackProvider = new FeedbackProvider( this.task.syllab, this.task.speech );
+      this.feedbackProvider = new FeedbackProvider( this.task.syllab, this.task.speech, this.task.highlight );
       this.feedbackProvider.init();
 
       const textEl = /** @type {HTMLElement}*/ (container.$refs.text);
@@ -156,7 +156,7 @@ export default {
         if ( !this.textPresenter.isInstructionPage ) {
           wordText = this.feedbackProvider.setFocusedWord( word );
         }
-        this.collector.setFocusedWord( word );
+        this.collector.setFocusedWord( word );console.log(word.textContent);
 
         const wordID = word ? word.dataset.wordId : '';
         this.fixation = { word: wordText ? new Word( wordText, wordID ) : null, duration: 0 };
@@ -198,7 +198,7 @@ export default {
         textEl.innerHTML = '';
 
         this.audioRecorder.stop().then( /** @param {Blob} blob */ blob => {
-          this.saveAudio( blob, url => {
+          this.saveAudio( blob, /** @param {string} url */ url => {
             this.audioFiles.push( url );
 
             this.startPage();
@@ -277,7 +277,7 @@ export default {
     /** @param {Blob} blob */
     saveAudio( blob, cb ) {
       const name = `${TextPageImage.generatePrefix()}-${this.textPresenter.page}`;
-      db.uploadAudio( blob, name, null, (err, url) => {
+      db.uploadAudio( blob, name, null, /** @param {string | Error} err @param {string} url */ (err, url) => {
         if (err) {
           console.error( 'AUDIO', err );
           cb( '' );

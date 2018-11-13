@@ -1,16 +1,19 @@
 // ts-check-only
 import SpeechFeedback from './speechFeedback';
 import SyllabificationFeedback from './syllabificationFeedback';
+import HighlightFeedback from './highlightFeedback';
 
 export class Feedbacks {
 
   /**
    * @param {SpeechFeedback} speech 
    * @param {SyllabificationFeedback} syllabification 
+   * @param {HighlightFeedback} highlight 
    */
-  constructor( speech, syllabification ) {
+  constructor( speech, syllabification, highlight ) {
     this.speech = speech;
     this.syllabification = syllabification;
+    this.highlight = highlight;
   }
 
 }
@@ -50,6 +53,19 @@ export class SpeechOptions {
   constructor() {
     /** @type {string} */
     this.language = '';
+    /** @type {Threshold} */
+    this.threshold = null;
+  }
+
+}
+
+export class HighlightOptions {
+
+  constructor() {
+    /** @type {string} */
+    this.language = '';
+    /** @type {string} */
+    this.color = '#004080';
     /** @type {Threshold} */
     this.threshold = null;
   }

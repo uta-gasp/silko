@@ -16,6 +16,10 @@
               bulma-checkbox(v-model="syllabTemporary" :label="tokens[ 'lbl_temp' ]" :disabled="!syllab.language")
             .field.is-horizontal
               bulma-checkbox(v-model="syllabAdjustForWordLength" :label="tokens[ 'lbl_word' ]" :disabled="!syllab.language")
+        feedback-editor(:header="tokens[ 'lbl_highlight' ]" v-model="highlight")
+          .field
+            .field.is-horizontal
+              bulma-checkbox(v-model="highlightAdjustForWordLength" :label="tokens[ 'lbl_word' ]" :disabled="!highlight.language")
       .column.is-paddingless.is-marginless
         .columns.is-paddingless.is-marginless
           .column.is-paddingless.is-marginless.is-narrow
@@ -32,12 +36,13 @@ import Task from '@/model/task.js';
 
 import Syllabifier from '@/task/syllabifier.js';
 import Speaker from '@/task/speaker.js';
+import Highlighter from '@/task/highlighter.js';
 
 import FeedbackEditor from '@/components/widgets/feedbackEditor.vue';
 import BulmaCheckbox from '@/components/widgets/bulmaCheckbox.vue';
 
 // ts-check-only
-import { SyllabOptions, SpeechOptions } from '@/model/session/feedbacks.js';
+import { SyllabOptions, SpeechOptions, HighlightOptions } from '@/model/session/feedbacks.js';
 
 /**
  * @fires input
@@ -65,6 +70,10 @@ export default {
       syllabModes: Object.keys( Syllabifier.MODES ),
       syllabLangs: Syllabifier.LANGS,
 
+      highlight: this.task ? this.task.highlight : Task.defaultHighlight,
+      highlightColor: this.task ? this.task.highlight.color : Task.defaultHighlight.color,
+      highlightAdjustForWordLength: this.task ? this.task.highlight.threshold.adjustForWordLength : Task.defaultHighlight.threshold.adjustForWordLength,
+
       tokens: i10n( 'task_editor_feedback' ),
     };
   },
@@ -77,18 +86,22 @@ export default {
   },
 
   computed: {
-    /** @returns {{syllab: SyllabOptions, speech: SpeechOptions, syllabExceptions: string}} */
+    /** @returns {{syllab: SyllabOptions, speech: SpeechOptions, syllabExceptions: string, highlight: HighlightOptions}} */
     model() {
       const result = {
         syllab: this.syllab,
         speech: this.speech,
         syllabExceptions: this.syllabExceptions,
+        highlight: this.highlight,
       };
 
       result.syllab.mode = this.syllabMode;
       result.syllab.temporary = this.syllabTemporary;
       result.syllab.threshold.adjustForWordLength = this.syllabAdjustForWordLength;
       result.speech.threshold.adjustForWordLength = this.speechAdjustForWordLength;
+      
+      result.highlight.color = this.highlightColor;
+      result.highlight.threshold.adjustForWordLength = this.highlightAdjustForWordLength;
 
       return result;
     },
@@ -102,6 +115,9 @@ export default {
     syllabMode() { this.$emit( 'input', this.model ); },
     syllabTemporary() { this.$emit( 'input', this.model ); },
     syllabAdjustForWordLength() { this.$emit( 'input', this.model ); },
+    highlight() { this.$emit( 'input', this.model ); },
+    highlightColor() { this.$emit( 'input', this.model ); },
+    highlightAdjustForWordLength() { this.$emit( 'input', this.model ); },
   },
 };
 </script>

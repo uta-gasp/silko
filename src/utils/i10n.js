@@ -585,6 +585,10 @@ const repos = {
       en: 'Syllabification',
       fi: 'Tavutus',
     },
+    lbl_highlight: {
+      en: 'Highlighting',
+      fi: 'Highlighting',   // TODO - translate
+    },
     lbl_syllabs: {
       en: 'Syllabifications',
       fi: 'Tavutukset',
@@ -604,6 +608,10 @@ const repos = {
     lbl_example: {
       en: 'Example: maailma=maa il ma',
       fi: 'Esimerkki: maailma=maa il ma',
+    },
+    lbl_enabled: {
+      en: 'Enabled',
+      fi: 'Enabled',  // TODO - translate
     },
 
     item_none: {

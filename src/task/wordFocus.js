@@ -18,6 +18,8 @@ export default class WordFocus {
     this.syllabified = false;
     /** @type {boolean} */
     this.pronounced = false;
+    /** @type {boolean} */
+    this.highlighted = false;
     /** @type {string} */
     this.word = this._getWordFromElement( el );
   }
