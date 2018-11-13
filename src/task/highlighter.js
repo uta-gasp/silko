@@ -53,11 +53,7 @@ export default class Highlighter {
 
     wordFocus.highlighted = true;
 
-    //el.style.cssText = `color: ${this._options.color} !important`;
-    //el.style.color = `${this._options.color} !important`;
     el.setAttribute( 'style', `color: ${this._options.color} !important` );
-    
-    console.log('highlighted with', this._options.color);
 
     return true;
   }

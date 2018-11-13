@@ -170,7 +170,7 @@ export default {
   },
 
   mounted() {
-    this.feedbackProvider = new FeedbackProvider( this.task.syllab, this.task.speech, this.task.highlight );
+    this.feedbackProvider = new FeedbackProvider( this.task.syllab, this.task.speech, this.task.highlight, this.task.warning );
     this.feedbackProvider.init();
 
     const textEl = /** @type {Vue} */ (this.$refs.container).$refs.text;

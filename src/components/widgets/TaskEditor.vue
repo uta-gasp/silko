@@ -67,7 +67,7 @@ import BulmaCheckbox from '@/components/widgets/bulmaCheckbox.vue';
 import { TextPageImage } from '@/model/task/textPageImage.js';
 import { Question } from '@/model/session/question.js';
 import Intro from '@/model/intro.js';
-import { SyllabOptions, SpeechOptions, HighlightOptions } from '@/model/session/feedbacks.js';
+import { SyllabOptions, SpeechOptions, HighlightOptions, WarningOptions } from '@/model/session/feedbacks.js';
 
 /**
  * @typedef Tab
@@ -110,6 +110,7 @@ export default {
       speech: Task.defaultSpeech,
       syllabExceptions: '',
       highlight: Task.defaultHighlight,
+      warning: Task.defaultWarning,
 
       /** @type {TextPageImage[]} */
       images: [],
@@ -230,6 +231,9 @@ export default {
       if ( this.ref.highlight ) {
         this.highlight = this.ref.highlight;
       }
+      if ( this.ref.warning ) {
+        this.warning = this.ref.warning;
+      }
 
       if ( this.ref.pages ) {
         this.ref.pages.forEach( ( page, index ) => {
@@ -296,12 +300,13 @@ export default {
       this.$emit( 'modified' );
     },
 
-    /** @param {{syllab: SyllabOptions, speech: SpeechOptions, syllabExceptions: string, highlight: HighlightOptions}} e */
+    /** @param {{syllab: SyllabOptions, speech: SpeechOptions, syllabExceptions: string, highlight: HighlightOptions, warning: WarningOptions}} e */
     setFeedbackInput( e ) {
       this.syllab = e.syllab;
       this.speech = e.speech;
       this.syllabExceptions = e.syllabExceptions;
       this.highlight = e.highlight;
+      this.warning = e.warning;
 
       this.$emit( 'modified' );
     },
@@ -324,6 +329,7 @@ export default {
         syllab: this.syllab,
         speech: this.speech,
         highlight: this.highlight,
+        warning: this.warning,
       } );
       window.localStorage.setItem( TASK_DEFAULTS, defaults );
     },
@@ -347,6 +353,7 @@ export default {
         syllab: { ...this.syllab },
         speech: { ...this.speech },
         highlight: { ...this.highlight },
+        warning: { ...this.warning },
         useTimeout: this.useTimeout,
         timeout: this.timeout,
         recordAudio: this.recordAudio,
@@ -371,6 +378,7 @@ export default {
         syllab: this.syllab,
         speech: this.speech,
         highlight: this.highlight,
+        warning: this.warning,
         images: this.images,
         questionnaire: this.questionnaire,
         useTimeout: this.useTimeout,

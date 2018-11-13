@@ -68,6 +68,7 @@ export default class Class extends Recordable {
       syllab: task.syllab,
       speech: task.speech,
       highlight: task.highlight,
+      warning: task.warning,
       questionnaire: task.questionnaire,
       useTimeout: task.useTimeout,
       timeout: task.timeout,

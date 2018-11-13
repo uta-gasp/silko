@@ -2,7 +2,7 @@ import Recordable from './commons/recordable.js';
 
 import TextPage from './task/textPage.js';
 import { TextPageImage } from './task/textPageImage.js';
-import { Threshold, SyllabOptions, SpeechOptions, HighlightOptions } from './session/feedbacks.js';
+import { Threshold, SyllabOptions, SpeechOptions, HighlightOptions, WarningOptions } from './session/feedbacks.js';
 
 import Intro from './intro.js';
 
@@ -41,6 +41,8 @@ export default class Task extends Recordable {
     this.speech = Task.defaultSpeech;
     /** @type {HighlightOptions} */
     this.highlight = Task.defaultHighlight;
+    /** @type {WarningOptions} */
+    this.warning = Task.defaultWarning;
     /** @type {Question[]} */
     this.questionnaire = [];
     /** @type {boolean} */
@@ -100,6 +102,15 @@ export default class Task extends Recordable {
       language: '',
       color: '#1050A0',
       threshold: new Threshold( 4000, false, 3000, 4000, false ),
+    };
+  }
+
+  /** @returns {WarningOptions} */
+  static get defaultWarning() {
+    return {
+      language: '',
+      phrase: 'Jatka lukemista!',
+      threshold: new Threshold( 5000 ),
     };
   }
 
@@ -256,6 +267,7 @@ export default class Task extends Recordable {
       syllab: task.syllab,
       speech: task.speech,
       highlight: task.highlight,
+      warning: task.warning,
       questionnaire: task.questionnaire,
       useTimeout: task.useTimeout,
       timeout: task.timeout,

@@ -1,5 +1,5 @@
 // ts-check-only
-import { SyllabOptions, SpeechOptions, HighlightOptions } from '@/model/session/feedbacks.js';
+import { SyllabOptions, SpeechOptions, HighlightOptions, WarningOptions } from '@/model/session/feedbacks.js';
 import { TextPageImage } from '@/model/task/textPageImage.js';
 
 export class TaskCreateParams {
@@ -21,6 +21,8 @@ export class TaskCreateParams {
     this.speech = null;
     /** @type {HighlightOptions} */
     this.highlight = null;
+    /** @type {WarningOptions} */
+    this.warning = null;
     /** @type {object[]} */
     this.questionnaire = null;
     /** @type {string} */

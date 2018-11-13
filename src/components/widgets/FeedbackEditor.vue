@@ -11,7 +11,7 @@
         slot(name="first")
       .field.is-horizontal
         .select
-          select(v-model="thresholdIsSmart" :disabled="!isEnabled")
+          select(v-model="thresholdIsSmart" :disabled="!isEnabled || !hasThresholdOptions")
             option(:value="false") {{ tokens[ 'item_fixed' ] }}
             option(:value="true") {{ tokens[ 'item_calib' ] }}
         template(v-if="thresholdIsSmart")
@@ -85,6 +85,11 @@ export default {
     /** @returns {boolean} */
     isEnabled() {
       return this.languages ? !!this.language : this.enabled;
+    },
+
+    /** @returns {boolean} */
+    hasThresholdOptions() {
+      return this.thresholdMin !== 0 || this.thresholdMax !== 0;
     },
 
     /** @returns {{language: string, threshold: {smart: boolean, min: number, max: number, value: number}}} */

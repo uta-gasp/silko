@@ -589,6 +589,14 @@ const repos = {
       en: 'Highlighting',
       fi: 'Highlighting',   // TODO - translate
     },
+    lbl_warning: {
+      en: 'Warning',
+      fi: 'Warning',        // TODO - translate
+    },
+    lbl_phrase: {
+      en: 'Phrase',
+      fi: 'Phrase',        // TODO - translate
+    },
     lbl_syllabs: {
       en: 'Syllabifications',
       fi: 'Tavutukset',

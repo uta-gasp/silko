@@ -2,6 +2,7 @@
 import SpeechFeedback from './speechFeedback';
 import SyllabificationFeedback from './syllabificationFeedback';
 import HighlightFeedback from './highlightFeedback';
+import WarningFeedback from './warningFeedback';
 
 export class Feedbacks {
 
@@ -9,11 +10,13 @@ export class Feedbacks {
    * @param {SpeechFeedback} speech 
    * @param {SyllabificationFeedback} syllabification 
    * @param {HighlightFeedback} highlight 
+   * @param {WarningFeedback} warning 
    */
-  constructor( speech, syllabification, highlight ) {
+  constructor( speech, syllabification, highlight, warning ) {
     this.speech = speech;
     this.syllabification = syllabification;
     this.highlight = highlight;
+    this.warning = warning;
   }
 
 }
@@ -72,6 +75,19 @@ export class HighlightOptions {
 
 }
 
+export class WarningOptions {
+
+  constructor() {
+    /** @type {string} */
+    this.language = '';
+    /** @type {string} */
+    this.phrase = '';
+    /** @type {Threshold} */
+    this.threshold = null;
+  }
+
+}
+
 export class Threshold {
 
   /**
@@ -81,7 +97,7 @@ export class Threshold {
    * @param {number} max 
    * @param {boolean} adjustForWordLength 
    */
-  constructor( value, smart, min, max, adjustForWordLength ) {
+  constructor( value, smart = false, min = 0, max = 0, adjustForWordLength = false ) {
     this.value = value;
     this.smart = smart;
     this.min = min;

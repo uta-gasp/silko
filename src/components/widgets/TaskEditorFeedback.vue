@@ -20,6 +20,11 @@
           .field
             .field.is-horizontal
               bulma-checkbox(v-model="highlightAdjustForWordLength" :label="tokens[ 'lbl_word' ]" :disabled="!highlight.language")
+        feedback-editor(:header="tokens[ 'lbl_warning' ]" v-model="warning" :languages="speechLangs")
+          .field
+            .field.is-horizontal
+              .control-line {{ tokens[ 'lbl_phrase' ] }}
+              input.input(type="text" v-model="warningPhrase" :disabled="!warning.language")
       .column.is-paddingless.is-marginless
         .columns.is-paddingless.is-marginless
           .column.is-paddingless.is-marginless.is-narrow
@@ -37,12 +42,13 @@ import Task from '@/model/task.js';
 import Syllabifier from '@/task/syllabifier.js';
 import Speaker from '@/task/speaker.js';
 import Highlighter from '@/task/highlighter.js';
+import WarningActor from '@/task/warningActor.js';
 
 import FeedbackEditor from '@/components/widgets/feedbackEditor.vue';
 import BulmaCheckbox from '@/components/widgets/bulmaCheckbox.vue';
 
 // ts-check-only
-import { SyllabOptions, SpeechOptions, HighlightOptions } from '@/model/session/feedbacks.js';
+import { SyllabOptions, SpeechOptions, HighlightOptions, WarningOptions } from '@/model/session/feedbacks.js';
 
 /**
  * @fires input
@@ -74,6 +80,9 @@ export default {
       highlightColor: this.task ? this.task.highlight.color : Task.defaultHighlight.color,
       highlightAdjustForWordLength: this.task ? this.task.highlight.threshold.adjustForWordLength : Task.defaultHighlight.threshold.adjustForWordLength,
 
+      warning: this.task ? this.task.warning : Task.defaultWarning,
+      warningPhrase: this.task ? this.task.warning.phrase : Task.defaultWarning.phrase,
+
       tokens: i10n( 'task_editor_feedback' ),
     };
   },
@@ -86,13 +95,14 @@ export default {
   },
 
   computed: {
-    /** @returns {{syllab: SyllabOptions, speech: SpeechOptions, syllabExceptions: string, highlight: HighlightOptions}} */
+    /** @returns {{syllab: SyllabOptions, speech: SpeechOptions, syllabExceptions: string, highlight: HighlightOptions, warning: WarningOptions}} */
     model() {
       const result = {
         syllab: this.syllab,
         speech: this.speech,
         syllabExceptions: this.syllabExceptions,
         highlight: this.highlight,
+        warning: this.warning,
       };
 
       result.syllab.mode = this.syllabMode;
@@ -102,6 +112,8 @@ export default {
       
       result.highlight.color = this.highlightColor;
       result.highlight.threshold.adjustForWordLength = this.highlightAdjustForWordLength;
+
+      result.warning.phrase = this.warningPhrase;
 
       return result;
     },
@@ -118,6 +130,8 @@ export default {
     highlight() { this.$emit( 'input', this.model ); },
     highlightColor() { this.$emit( 'input', this.model ); },
     highlightAdjustForWordLength() { this.$emit( 'input', this.model ); },
+    warning() { this.$emit( 'input', this.model ); },
+    warningPhrase() { this.$emit( 'input', this.model ); },
   },
 };
 </script>
@@ -135,6 +149,14 @@ export default {
   .instruction {
     line-height: 1.75em;
     font-size: 0.9em;
+  }
+
+  .control-line {
+    display: inline-block;
+    margin: 0 0.5em 0 0;
+    line-height: 2.25em;
+    vertical-align: middle;
+    white-space: nowrap;
   }
 
 </style>

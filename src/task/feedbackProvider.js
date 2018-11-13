@@ -2,15 +2,16 @@
  * @external EventEmitter
  */
 
-import { Feedbacks } from '@/model/session/feedbacks.js';
+import { Feedbacks, Threshold } from '@/model/session/feedbacks.js';
 
 import Syllabifier from './syllabifier.js';
 import Speaker from './speaker.js';
 import Highlighter from './highlighter.js';
+import WarningActor from './warningActor.js';
 import WordFocus from './wordFocus.js';
 
 // ts-check-only
-import { SyllabOptions, SpeechOptions, HighlightOptions } from '@/model/session/feedbacks';
+import { SyllabOptions, SpeechOptions, HighlightOptions, WarningOptions } from '@/model/session/feedbacks';
 
 const FOCUS_THRESHOLD = 150;
 const REENTRY_THRESHOLD = 1000;
@@ -22,6 +23,7 @@ const HIGHLIGHT_CLASS = 'currentWord';
  * @fires syllabified
  * @fires pronounced
  * @fires highlighted
+ * @fires warned
  */
 export default class FeedbackProvider {
 
@@ -29,14 +31,17 @@ export default class FeedbackProvider {
    * @param {SyllabOptions} syllab 
    * @param {SpeechOptions} speech 
    * @param {HighlightOptions} highlight
+   * @param {WarningOptions} warning
    */
-  constructor( syllab, speech, highlight ) {
+  constructor( syllab, speech, highlight, warning ) {
     /** @type {Syllabifier} */
     this._syllabifier = new Syllabifier( syllab );
     /** @type {Speaker} */
     this._speaker = new Speaker( speech );
     /** @type {Highlighter} */
     this._highlighter = new Highlighter( highlight );
+    /** @type {WarningActor} */
+    this._warningActor = new WarningActor( warning );
 
     /** @type {EventEmitter} */
     this._events = new EventEmitter();
@@ -46,6 +51,8 @@ export default class FeedbackProvider {
     this.currentWord = null;
     /** @type {HTMLElement} */
     this.lastFocusedWord = null;
+    /** @type {HTMLElement} */
+    this.lastWord = null;
 
     /** @type {Map<HTMLElement,WordFocus>} {el: WordFocus} */
     this.words = null;
@@ -66,6 +73,11 @@ export default class FeedbackProvider {
     return this._highlighter;
   }
 
+  /** @returns {WarningActor} */
+  get waringActor() {
+    return this._warningActor;
+  }
+
   /** @returns {EventEmitter} */
   get events() {
     return this._events;
@@ -77,6 +89,7 @@ export default class FeedbackProvider {
       this._speaker.setup,
       this._syllabifier.setup,
       this._highlighter.setup,
+      this._warningActor.setup,
     );
   }
 
@@ -88,8 +101,10 @@ export default class FeedbackProvider {
     }
 
     this.lastFocusedWord = null;
+    this.lastWord = null;
 
     clearTimeout( this.timer );
+
     this.timer = null;
     this.words = null;
   }
@@ -97,7 +112,7 @@ export default class FeedbackProvider {
   init() {
     this.words = new Map();
 
-    if ( this._syllabifier.enabled || this._speaker.enabled || this._highlighter.enabled ) {
+    if ( this._syllabifier.enabled || this._speaker.enabled || this._highlighter.enabled || this._warningActor.enabled ) {
       this.timer = setInterval( () => {
         this._tick();
       }, 30 );
@@ -117,6 +132,7 @@ export default class FeedbackProvider {
     this.words = new Map();
     this.currentWord = null;
     this.lastFocusedWord = null;
+    this.lastWord = null;
   }
 
   /**
@@ -158,6 +174,8 @@ export default class FeedbackProvider {
 
         this.lastFocusedWord = el;
       }
+
+      this.lastWord = el;
     }
 
     return this.currentWord ? this.words.get( this.currentWord ).word : null;
@@ -187,6 +205,10 @@ export default class FeedbackProvider {
         this._events.emitEvent( 'highlighted', [ key ] );
       }
     }
-  };
+
+    if ( this._warningActor.inspect( this.lastWord ) ) {
+      this._events.emitEvent( 'warned', [ ] );
+    }
+  }
 
 };

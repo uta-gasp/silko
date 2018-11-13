@@ -135,7 +135,12 @@ export default {
 
       this.font = Font.from( container.$data.textStyle );
       
-      this.feedbackProvider = new FeedbackProvider( this.task.syllab, this.task.speech, this.task.highlight );
+      this.feedbackProvider = new FeedbackProvider( 
+        this.task.syllab, 
+        this.task.speech, 
+        this.task.highlight,
+        this.task.warning,
+      );
       this.feedbackProvider.init();
 
       const textEl = /** @type {HTMLElement}*/ (container.$refs.text);
@@ -156,7 +161,7 @@ export default {
         if ( !this.textPresenter.isInstructionPage ) {
           wordText = this.feedbackProvider.setFocusedWord( word );
         }
-        this.collector.setFocusedWord( word );console.log(word.textContent);
+        this.collector.setFocusedWord( word );
 
         const wordID = word ? word.dataset.wordId : '';
         this.fixation = { word: wordText ? new Word( wordText, wordID ) : null, duration: 0 };
@@ -170,7 +175,7 @@ export default {
         this.fixation = { word: null, duration: 0 };
       } );
 
-      gazeTracking.setCallback( 'gazePoint', 'task-page', gazePoint => {
+      gazeTracking.setCallback( 'gazePoint', 'task-page', /** @param {GTFixation} gazePoint */ gazePoint => {
         this.collector.addGazePoint( gazePoint );
       } );
 
